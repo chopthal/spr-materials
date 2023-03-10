@@ -36,7 +36,7 @@ available_number_column_index = 17
 
 for idxSheet, sheet in enumerate(sheet_names):
 
-    if idxSheet > 3:
+    if idxSheet > 2:
         break
 
     df = pd.read_excel(file_path, sheet_name=sheet)
