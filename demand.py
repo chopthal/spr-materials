@@ -26,6 +26,7 @@ df = pd.read_excel(file_path, sheet_name='재료')
 demand_prox = int(input("iMSPR-ProX 목표 대수를 입력하세요: "))
 demand_pro = int(input("iMSPR-Pro 목표 대수를 입력하세요: "))
 demand_mini = int(input("iMSPR-mini 목표 대수를 입력하세요: "))
+demand_tcu = int(input("TCU 목표 대수를 입력하세요: "))
 
 parts_stock = pd.Series(data=df['보유'], dtype=int)
 parts_price = pd.Series(data=df['Unit price'], dtype=int)
@@ -41,6 +42,7 @@ parts_distributor = pd.Series(data=df['취급처'], dtype=str)
 parts_demand_prox = pd.Series(data=df['ProX'], dtype=int) * demand_prox
 parts_demand_pro = pd.Series(data=df['Pro'], dtype=int) * demand_pro
 parts_demand_mini = pd.Series(data=df['mini'], dtype=int) * demand_mini
+parts_demand_tcu = pd.Series(data=df['TCU'], dtype=int) * demand_tcu
 
 shortage = parts_stock - parts_demand_prox - parts_demand_pro - parts_demand_mini
 shortage_num = shortage[shortage < 0] * -1
@@ -66,7 +68,8 @@ df_result.rename(columns = {1 : '가격'}, inplace = True)
 
 dict_target = {'iMSPR-ProX' : demand_prox, 
                'iMSPR-Pro' : demand_pro,
-               'iMSPR-mini' : demand_mini}
+               'iMSPR-mini' : demand_mini,
+               'TCU module' : demand_tcu}
 df_target = pd.DataFrame(dict_target, index=['목표 대수'])
 
 target_table = tabulate(df_target, headers='keys', tablefmt="github")
@@ -81,7 +84,7 @@ print('* 필요 금액 : ', shortage_price_sum, '원')
 # Save excel file
 # Category, Name, Description, PN, Brand, 필요 수량, Pk Price, Pk Q'ty, Unit price, 취급처
 df_result_save = pd.concat([shortage_category,shortage_name,shortage_product_num, shortage_brand, shortage_num, shortage_pk_qty, shortage_pk_price, shortage_distributor], axis=1)
-df_result_save.rename(columns = {0 : '개수'}, inplace = True)
+df_result_save.rename(columns = {0 : '필요개수'}, inplace = True)
 
 now = datetime.datetime.now()
 filename = "{}_demands.xlsx".format(now.strftime("%Y-%m-%d_%H-%M-%S"))
